@@ -1,6 +1,6 @@
-package Server;
+package ServerSide;
 
-import Client.Client;
+import ClientSide.Client;
 
 /**
  * @author Baha2r
