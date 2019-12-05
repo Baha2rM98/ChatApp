@@ -8,5 +8,5 @@ import ClientSide.Client;
  **/
 
 public interface OnConnected {
-    void onConnected(Client client);
+    void onConnected();
 }

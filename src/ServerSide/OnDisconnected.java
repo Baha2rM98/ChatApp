@@ -8,5 +8,5 @@ import ClientSide.Client;
  **/
 
 public interface OnDisconnected {
-    void onDisconnected(Client client);
+    void onDisconnected();
 }
