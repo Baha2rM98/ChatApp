@@ -9,32 +9,42 @@ import java.util.*;
  * Date: 12/05/2019 02:33 AM
  **/
 
-public class ChatServer {
+public class ChatServer implements OnConnected {
+    private ServerSocket serverSocket;
     private Socket server;
     static Vector<ClientHandler> activeClients;
-    static int activeClientsNumber = 0;
+    private int activeClientsNumber = 0;
 
     public ChatServer(int port) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(port);
+        this.serverSocket = new ServerSocket(port);
         System.out.println("Running the server...\nWaiting for client...\n");
         activeClients = new Vector<>();
         while (true) {
-            this.server = serverSocket.accept();
-            System.out.println("New client request received : " + server.toString());
+            onConnected();
             DataInputStream input = new DataInputStream(server.getInputStream());
             DataOutputStream output = new DataOutputStream(server.getOutputStream());
-            ClientHandler newClient = new ClientHandler();
+            ClientHandler newClient = new ClientHandler(this.server, "client " + activeClientsNumber, input, output);
             activeClientsNumber++;
             activeClients.add(newClient);
             newClient.start();
         }
     }
 
-    public static int getActiveClientsNumber() {
-        return activeClientsNumber;
+    public int getActiveClientsNumber() {
+        return this.activeClientsNumber;
     }
 
     public Socket getServer() {
-        return server;
+        return this.server;
+    }
+
+    @Override
+    public void onConnected() {
+        try {
+            this.server = serverSocket.accept();
+            System.out.println("New client request received : " + server.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
