@@ -2,25 +2,39 @@ package ServerSide;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author Baha2r
  * Date: 12/05/2019 02:33 AM
  **/
 
-public class ChatServer extends Thread {
-    private ServerSocket serverSocket;
-    private InputStream input;
-    private OutputStream output;
+public class ChatServer {
     private Socket server;
-    private Scanner scn;
+    static Vector<ClientHandler> activeClients;
+    static int activeClientsNumber = 0;
 
     public ChatServer(int port) throws IOException {
-        this.scn = new Scanner(System.in);
-        this.serverSocket = new ServerSocket(port);
-        System.out.println("Running the server...");
-        this.server = this.serverSocket.accept();
-        System.out.println("Server is Up!\nConnected to: " + server.toString());
+        ServerSocket serverSocket = new ServerSocket(port);
+        System.out.println("Running the server...\nWaiting for client...\n");
+        activeClients = new Vector<>();
+        while (true) {
+            this.server = serverSocket.accept();
+            System.out.println("New client request received : " + server.toString());
+            DataInputStream input = new DataInputStream(server.getInputStream());
+            DataOutputStream output = new DataOutputStream(server.getOutputStream());
+            ClientHandler newClient = new ClientHandler();
+            activeClientsNumber++;
+            activeClients.add(newClient);
+            newClient.start();
+        }
+    }
+
+    public static int getActiveClientsNumber() {
+        return activeClientsNumber;
+    }
+
+    public Socket getServer() {
+        return server;
     }
 }
