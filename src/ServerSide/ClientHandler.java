@@ -25,24 +25,23 @@ class ClientHandler extends Thread implements OnDisconnected {
     }
 
     @Override
-    public void run() {
-//        super.run();
+    public synchronized void run() {
+        super.run();
         String received = "";
         while (true) {
             try {
                 received = this.input.readUTF();
                 System.out.println(received);
                 if (received.toLowerCase().equals("logout")) {
-                    this.isLoggedIn = false;
-                    this.server.close();
-                    break;
+                    onDisconnected();
+                    return;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            StringTokenizer st = new StringTokenizer(received, "@");
-            String message = st.nextToken();
-            String contact = st.nextToken();
+            StringTokenizer tokenizer = new StringTokenizer(received, "@");
+            String message = tokenizer.nextToken();
+            String contact = tokenizer.nextToken();
             for (ClientHandler client : ChatServer.activeClients) {
                 if (client.clientName.equals(contact) && client.isLoggedIn) {
                     try {
@@ -54,12 +53,13 @@ class ClientHandler extends Thread implements OnDisconnected {
                 }
             }
         }
-        onDisconnected();
     }
 
     @Override
     public void onDisconnected() {
         try {
+            this.isLoggedIn = false;
+            this.server.close();
             this.input.close();
             this.output.close();
         } catch (IOException e) {
