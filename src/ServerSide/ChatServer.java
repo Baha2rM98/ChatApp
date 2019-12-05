@@ -13,7 +13,7 @@ public class ChatServer implements OnConnected {
     private ServerSocket serverSocket;
     private Socket server;
     static Vector<ClientHandler> activeClients;
-    private int activeClientsNumber = 0;
+    private int activeClientsNumber = 1;
 
     public ChatServer(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
