@@ -1,3 +1,6 @@
 /.idea
 /out
 /ChatApp.iml
+/src/ClientOneTest.java
+/src/ClientTwoTest.java
+/src/ClientThreeTest.java
